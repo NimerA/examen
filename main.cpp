@@ -1,28 +1,40 @@
 #include "Test.h"
-#include <iostream>
-
 using namespace std;
 
-map<int,int> memo;
 
-int countPaths(int** DAG, int size, int origin, int destination, int paths)
+int** _initMemo(int size)
+{
+    int **answer = new int* [size];
+    for(int i=0;i<size;i++)
+    {
+        answer[i]=new int[size];
+        for(int j=0;j<size;j++)
+            answer[i][j]=-1;
+    }
+    return answer;
+}
+
+int countPaths(int** DAG, int size, int origin, int destination, int** memo)
 {
     if(destination == origin)
-        return paths;
+        return 1;
 
+    int paths = 0;
     for(int i = 0; i < size; ++i) {
         if(DAG[origin][i] != -1 ) {
-            return countPaths(DAG,size,i,destination,paths+1);
+            if(memo[origin][i] == -1)
+                memo[origin][i] = countPaths(DAG,size,i,destination,memo);
+            paths += memo[origin][i];
         }
     }
-
+    return paths;
 }
-//Counts the number of posibles paths from origin to destination in the given DAG (Directed Acyclic Graph)
+//Counts the number of possibles paths from origin to destination in the given DAG (Directed Acyclic Graph)
 //Use Dynamic Programing to optimize the process
 int countPaths(int** DAG, int size, int origin, int destination)
 {
-    cout<<countPaths(DAG,size,origin,destination,0)<<endl;
-    return countPaths(DAG,size,origin,destination,0);
+    int** memo = _initMemo(size);
+    return countPaths(DAG,size,origin,destination,memo);
 }
 
 
